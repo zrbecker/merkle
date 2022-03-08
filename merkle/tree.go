@@ -18,32 +18,24 @@ func InsertBST(node Node, key string, value string) (Node, LeafNode) {
 	case *innerNode:
 		if key < n.right.MinKey() {
 			newLeft, newLeaf := InsertBST(n.left, key, value)
-			var newNode Node
+			newRoot := NewInnerNode(newLeft, n.right)
 			if newLeft.Height()-n.right.Height() > 1 {
-				if newLeft.Height()-newLeft.(*innerNode).left.Height() == 1 {
-					newNode = rotateRight(NewInnerNode(newLeft, n.right))
-				} else {
+				if newLeft.Height()-newLeft.(*innerNode).left.Height() != 1 {
 					newLeft = rotateLeft(newLeft)
-					newNode = rotateRight(NewInnerNode(newLeft, n.right))
 				}
-			} else {
-				newNode = NewInnerNode(newLeft, n.right)
+				newRoot = rotateRight(NewInnerNode(newLeft, n.right))
 			}
-			return newNode, newLeaf
+			return newRoot, newLeaf
 		} else {
 			newRight, newLeaf := InsertBST(n.right, key, value)
-			var newNode Node
+			newRoot := NewInnerNode(n.left, newRight)
 			if newRight.Height()-n.left.Height() > 1 {
-				if newRight.Height()-newRight.(*innerNode).right.Height() == 1 {
-					newNode = rotateLeft(NewInnerNode(n.left, newRight))
-				} else {
+				if newRight.Height()-newRight.(*innerNode).right.Height() != 1 {
 					newRight = rotateRight(newRight)
-					newNode = rotateLeft(NewInnerNode(n.left, newRight))
 				}
-			} else {
-				newNode = NewInnerNode(n.left, newRight)
+				newRoot = rotateLeft(NewInnerNode(n.left, newRight))
 			}
-			return newNode, newLeaf
+			return newRoot, newLeaf
 		}
 	default:
 		newLeaf := NewLeaf(key, value)
